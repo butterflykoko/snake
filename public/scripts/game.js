@@ -57,6 +57,50 @@ function changeDirection(e) {
             break;
     }
 }
+// Instructions to change color mode
+console.log("Get current appearance: getCurrent();");
+console.log("Change: changeMode();");
+// Set current appearance
+class Appearance {
+    mode;
+    light;
+    dark;
+    constructor(mode, light, dark) {
+        this.mode = mode;
+        this.light = light;
+        this.dark = dark;
+    }
+    getMode() {
+        return this.mode;
+    }
+    change() {
+        if (currentAppearance.light == true) {
+            // Turn dark mode on
+            currentAppearance.mode = "dark";
+            currentAppearance.light = false;
+            currentAppearance.dark = true;
+            background.style.backgroundColor = "#000c1e";
+            board.style.backgroundColor = "#29470c";
+        }
+        else if (currentAppearance.dark == true) {
+            // Switch back to light mode
+            currentAppearance.mode = "light";
+            currentAppearance.light = true;
+            currentAppearance.dark = false;
+            background.style.backgroundColor = "";
+            board.style.backgroundColor = "";
+        }
+        localStorage.setItem("save", this.mode);
+    }
+}
+let currentAppearance = new Appearance("light", true, false);
+let background = document.body; // Access background
+const getCurrent = () => {
+    return currentAppearance.getMode();
+}; // Get current mode
+const changeMode = () => {
+    return currentAppearance.change();
+}; // Change apperance
 // Set up game after window object loads
 window.onload = function () {
     let height = row * blockSize;
@@ -64,6 +108,11 @@ window.onload = function () {
     let width = col * blockSize;
     board.style.width = `${width}px`;
     generateFood();
+    // Save current appearance
+    const save = localStorage.getItem("save");
+    if (save === "dark") {
+        currentAppearance.change();
+    }
     document.addEventListener("keydown", changeDirection); // Moving snake
     setInterval(update, 1000 / 10); // Snake speed
 };
