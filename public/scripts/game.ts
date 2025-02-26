@@ -123,7 +123,7 @@ const getCurrent = () => {
 }; // Get current mode
 
 const changeMode = () => {
-    return currentAppearance.change();
+  return currentAppearance.change();
 }; // Change apperance
 
 // Set up game after window object loads
