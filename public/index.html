@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Snake</title>
+		<link href="./styles.css" rel="stylesheet" />
+	</head>
+	<body>
+		<h1 id="title">Snake</h1>
+		<div class="container" id="header">
+			<span id="score">Score: 0</span>
+			<button type="button" id="theme" onclick="changeMode()">
+				<img src="./images/moon-fill.svg" alt="Dark theme icon" />
+			</button>
+		</div>
+		<div class="container">
+			<div id="board">
+				<div class="snake" id="snake-head"></div>
+				<div id="food"></div>
+			</div>
+		</div>
+		<div class="container">
+			<button type="button" id="restart" onclick="window.location.reload()">Restart</button>
+		</div>
+		<script src="./index.js"></script>
+	</body>
+</html>
