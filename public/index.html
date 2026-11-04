@@ -9,6 +9,7 @@
 	<body>
 		<h1 id="title">Snake</h1>
 		<div class="container" id="header">
+			<span id="bestScore">Best: 0</span>
 			<span id="score">Score: 0</span>
 			<button type="button" id="theme" onclick="changeMode()">
 				<img src="./images/moon-fill.svg" alt="Dark theme icon" />
@@ -21,7 +22,12 @@
 			</div>
 		</div>
 		<div class="container">
-			<button type="button" id="restart" onclick="window.location.reload()">Restart</button>
+			<button
+				type="button"
+				id="restart"
+				onclick="window.location.reload()">
+				Restart
+			</button>
 		</div>
 		<script src="./index.js"></script>
 	</body>

@@ -4,6 +4,12 @@ const cellSize = 25;
 const gridSize = 16;
 let board = document.getElementById('board');
 
+// Initalize score variables
+let score;
+let scoreText = document.getElementById('score');
+let bestScore = localStorage.getItem('bestScore');
+let bestScoreText = document.getElementById('bestScore');
+
 // Snake
 let snakeX = cellSize * 5;
 let snakeY = cellSize * 5;
@@ -54,46 +60,41 @@ function changeDirection(e) {
 	}
 }
 
-let titleText = document.getElementById('title');
-let scoreText = document.getElementById('score');
-
 class Appearance {
-	light;
-	dark;
+	mode;
 
-	constructor(save, light, dark) {
-		this.light = light;
-		this.dark = dark;
+	constructor(mode) {
+		this.mode = mode;
+	}
+
+	apply() {
+		if (this.mode === 'dark') {
+			background.style.backgroundColor = '#000c1e';
+			board.style.backgroundColor = '#29470c';
+			document.body.style.color = '#ffffff';
+		} else {
+			background.style.backgroundColor = '';
+			board.style.backgroundColor = '';
+			document.body.style.color = '';
+		}
 	}
 
 	change() {
-		if (currentAppearance.light == true) {
-			currentAppearance.mode = 'dark';
-			currentAppearance.light = false;
-			currentAppearance.dark = true;
-
-			background.style.backgroundColor = '#000c1e';
-			board.style.backgroundColor = '#29470c';
-			titleText.style.color = '#ffffff';
-			scoreText.style.color = '#ffffff';
-		} else if (currentAppearance.dark == true) {
-			currentAppearance.mode = 'light';
-			currentAppearance.light = true;
-			currentAppearance.dark = false;
-
-			background.style.backgroundColor = '';
-			board.style.backgroundColor = '';
-			titleText.style.color = '';
-			scoreText.style.color = '';
+		if (this.mode === 'light') {
+			this.mode = 'dark';
+		} else {
+			this.mode = 'light';
 		}
+
+		localStorage.setItem('theme', this.mode);
+		this.apply();
 	}
 }
 
-let currentAppearance = new Appearance('light', true, false);
 let background = document.body;
-const changeMode = () => {
-	return currentAppearance.change();
-};
+let currentAppearance = new Appearance(localStorage.getItem('theme') || 'light');
+currentAppearance.apply();
+const changeMode = () => currentAppearance.change();
 
 let gameLoop;
 
@@ -103,6 +104,7 @@ window.onload = function () {
 	board.style.width = `${size}px`;
 	generateFood();
 
+	bestScoreText.textContent = 'Best: ' + `${bestScore}`;
 	document.addEventListener('keydown', changeDirection);
 	gameLoop = setInterval(update, 100); // Snake speed
 };
@@ -112,21 +114,38 @@ function update() {
 	let segmentX = snakeX;
 	let segmentY = snakeY;
 
+	let nextX = snakeX;
+	let nextY = snakeY;
+
 	// Snake movement
 	switch (direction) {
 		case 'up':
-			snakeY -= cellSize;
+			nextY -= cellSize;
 			break;
 		case 'down':
-			snakeY += cellSize;
+			nextY += cellSize;
 			break;
 		case 'right':
-			snakeX += cellSize;
+			nextX += cellSize;
 			break;
 		case 'left':
-			snakeX -= cellSize;
+			nextX -= cellSize;
 			break;
 	}
+
+	// Wall check
+	if (
+		nextX < 0 ||
+		nextX >= gridSize * cellSize ||
+		nextY < 0 ||
+		nextY >= gridSize * cellSize
+	) {
+		endGame();
+		return;
+	}
+
+	snakeX = nextX;
+	snakeY = nextY;
 
 	// Snake body movement
 	let segment;
@@ -151,24 +170,19 @@ function update() {
 	snakeHead.style.top = `${snakeY}px`;
 
 	// Collisions
-	let gameOver = false;
+	function endGame() {
+		let gameOver = true;
 
-	if (snakeX < 0 || snakeX >= gridSize * cellSize || snakeY < 0 || snakeY >= gridSize * cellSize) {
-		gameOver = true;
-	}
-
-	for (let i = snakeBody.length - 1; i > 0; i--) {
-		if (snakeX == snakeBody[i].x && snakeY == snakeBody[i].y) {
-			gameOver = true;
+		for (let i = snakeBody.length - 1; i > 0; i--) {
+			if (snakeX == snakeBody[i].x && snakeY == snakeBody[i].y) {
+				gameOver = true;
+			}
 		}
-	}
 
-	if (gameOver == true) {
-		clearInterval(gameLoop);
-		alert('Game Over!');
-
-		let score = snakeBody.length - 1;
-		document.getElementById('score').textContent = "Score: " + `${score}`;
+		if (gameOver == true) {
+			clearInterval(gameLoop);
+			alert('Game Over!');
+		}
 	}
 
 	function grow() {
@@ -182,10 +196,18 @@ function update() {
 			board.appendChild(segment);
 			snakeBody.push({ x: segmentX, y: segmentY });
 			generateFood();
+
+			// Active score changes
+			score = snakeBody.length - 1;
+			scoreText.textContent = 'Score: ' + score;
+
+			if (score > bestScore) {
+				bestScore = score;
+				localStorage.setItem('bestScore', bestScore);
+				bestScoreText.textContent = 'Best: ' + bestScore;
+			}
 		}
 	}
 
 	grow();
 }
-
-update();
