@@ -1,2 +1,2 @@
-# Snake Improved
-This is an improvement from my previous snake game using only Javascript. Typscript and Express were not needed for a front-end project like Snake. The changes made were improvements to readability, reducing redundancy, and a simple UI. The UI consists of the game title, a simple scoring system, a button to change between light and dark themes, and a restart button.
+# A Simple Snake Game
+A simple game that saves your best score. Everything is done locally with changes to your score saved in the browser along with the dark theme. Enjoy! c:
